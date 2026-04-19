@@ -1,28 +1,63 @@
-import { useDispatch } from "react-redux";
-import {
-  increaseQty,
-  decreaseQty,
-  deleteItem
-} from "./CartSlice";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { removeItem, updateQuantity } from "./CartSlice";
+import "./CartItem.css";
 
-export default function CartItem({ item }) {
+const CartItem = () => {
+  const cart = useSelector(state => state.cart);
   const dispatch = useDispatch();
 
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
   return (
-    <div className="cart-card">
-      <h3>{item.name}</h3>
-      <p>Unit Price: ${item.price}</p>
-      <p>Total: ${item.price * item.quantity}</p>
+    <div className="cart-container">
+      <h2>Shopping Cart</h2>
 
-      <div className="buttons">
-        <button onClick={() => dispatch(decreaseQty(item.id))}>-</button>
-        <span>{item.quantity}</span>
-        <button onClick={() => dispatch(increaseQty(item.id))}>+</button>
-      </div>
+      {cart.map(item => (
+        <div key={item.id} className="cart-item">
+          <h3>{item.name}</h3>
+          <p>${item.price}</p>
 
-      <button onClick={() => dispatch(deleteItem(item.id))}>
-        Delete
-      </button>
+          <button
+            onClick={() =>
+              dispatch(
+                updateQuantity({
+                  id: item.id,
+                  quantity: item.quantity - 1
+                })
+              )
+            }
+          >
+            -
+          </button>
+
+          <span>{item.quantity}</span>
+
+          <button
+            onClick={() =>
+              dispatch(
+                updateQuantity({
+                  id: item.id,
+                  quantity: item.quantity + 1
+                })
+              )
+            }
+          >
+            +
+          </button>
+
+          <button onClick={() => dispatch(removeItem(item.id))}>
+            Remove
+          </button>
+        </div>
+      ))}
+
+      <h3>Total: ${total}</h3>
     </div>
   );
-}
+};
+
+export default CartItem;
