@@ -1,49 +1,32 @@
+import { useSelector } from "react-redux";
+import ProductList from "./ProductList";
+import CartItem from "./CartItem";
+import AboutUs from "./AboutUs";
+import "./App.css";
 
-import React, { useState } from 'react';
-import ProductList from './ProductList';
-import './App.css';
-import AboutUs from './AboutUs';
-
-function App() {
-  
-  const [showProductList, setShowProductList] = useState(false);
-
-  const handleGetStartedClick = () => {
-    setShowProductList(true);
-  };
-
-  const handleHomeClick = () => {
-    setShowProductList(false);
-  };
+export default function App() {
+  const cartItems = useSelector(state => state.cart.items);
 
   return (
-    <div className="app-container">
-      <div className={`landing-page ${showProductList ? 'fade-out' : ''}`}>
-        <div className="background-image"></div>
-        <div className="content">
-         <div className="landing_content">
-         <h1>Welcome To Paradise Nursery</h1>
-          <div className="divider"></div>
-          <p>Where Green Meets Serenity</p>
-         
-          <button className="get-started-button" onClick={handleGetStartedClick}>
-            Get Started
-          </button>
-         </div>
-          <div className="aboutus_container">
-          <AboutUs/>
-          </div>
-          </div>
+    <div>
+      <nav className="navbar">
+        <h1>Paradise Nursery</h1>
+        <span>Cart: {cartItems.length}</span>
+      </nav>
 
-      </div>
-      <div className={`product-list-container ${showProductList ? 'visible' : ''}`}>
-        <ProductList onHomeClick={handleHomeClick}/>
+      <AboutUs />
+
+      <ProductList />
+
+      <h2>Cart</h2>
+      {cartItems.map(item => (
+        <CartItem key={item.id} item={item} />
+      ))}
+
+      <div className="cart-actions">
+        <button>Continue Shopping</button>
+        <button>Checkout</button>
       </div>
     </div>
   );
 }
-
-export default App;
-
-
-
